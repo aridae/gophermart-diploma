@@ -1,0 +1,6 @@
+package: apispec
+generate:
+  std-http-server: true
+  embedded-spec: true
+  models: true
+output: service.go
