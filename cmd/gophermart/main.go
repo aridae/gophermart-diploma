@@ -85,7 +85,7 @@ func main() {
 
 	httpPublicServer := httpserver.NewServer(
 		cnf.Address,
-		oapispec.HandlerFromMux(apiService, http.NewServeMux()),
+		oapispec.HandlerFromMuxWithBaseURL(apiService, http.NewServeMux(), "/api"),
 		oapimw.OapiRequestValidatorWithOptions(swagger, &oapimw.Options{
 			Options: openapi3filter.Options{
 				AuthenticationFunc: openapi3filter.NoopAuthenticationFunc,
