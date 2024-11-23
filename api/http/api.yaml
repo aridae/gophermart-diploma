@@ -229,7 +229,8 @@ components:
             - PROCESSED
           example: PROCESSED
         accrual:
-          type: integer
+          type: number
+          format: float
           example: 500
         uploaded_at:
           type: string

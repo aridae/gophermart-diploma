@@ -7,14 +7,15 @@ import (
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
+	"github.com/aridae/gophermart-diploma/pkg/pointer"
 	"net/http"
 )
 
-func mapDomainToAPIWithdrawal(withdrawal model.Withdrawal) oapispec.Withdrawal {
+func mapDomainToAPIWithdrawal(withdrawal model.WithdrawalLog) oapispec.Withdrawal {
 	return oapispec.Withdrawal{
 		Order:       withdrawal.OrderNumber,
-		ProcessedAt: withdrawal.ProcessedAt,
-		Sum:         withdrawal.Sum,
+		ProcessedAt: withdrawal.CreatedAt,
+		Sum:         withdrawal.Sum.Float32(),
 	}
 }
 
@@ -40,8 +41,13 @@ func mapDomainToAPIOrder(order model.Order) (oapispec.Order, error) {
 		return oapispec.Order{}, fmt.Errorf("error converting order status '%s' to API model: %w", order.Status, err)
 	}
 
+	var accrual *float32
+	if order.Accrual != nil {
+		accrual = pointer.To(order.Accrual.Float32())
+	}
+
 	return oapispec.Order{
-		Accrual:    order.Accrual,
+		Accrual:    accrual,
 		Number:     order.Number,
 		Status:     apiStatus,
 		UploadedAt: order.UploadedAt,
@@ -50,8 +56,8 @@ func mapDomainToAPIOrder(order model.Order) (oapispec.Order, error) {
 
 func mapDomainToAPIBalance(balance model.Balance) oapispec.Balance {
 	return oapispec.Balance{
-		Current:   balance.Current,
-		Withdrawn: balance.Withdrawn,
+		Current:   balance.Current.Float32(),
+		Withdrawn: balance.Withdrawn.Float32(),
 	}
 }
 

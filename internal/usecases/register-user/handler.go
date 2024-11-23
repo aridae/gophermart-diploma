@@ -10,17 +10,8 @@ import (
 	"time"
 )
 
-type Request struct {
-	Login    string
-	Password string
-}
-
-type Response struct {
-	JWT string
-}
-
 type userRepository interface {
-	CreateUser(ctx context.Context, user model.UserCredentials, now time.Time) (int64, error)
+	CreateUser(ctx context.Context, user model.UserCredentials, now time.Time) error
 }
 
 type jwtService interface {
@@ -44,6 +35,15 @@ func NewHandler(
 	}
 }
 
+type Request struct {
+	Login    string
+	Password string
+}
+
+type Response struct {
+	JWT string
+}
+
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 	now := h.now()
 
@@ -52,7 +52,7 @@ func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 		return Response{}, fmt.Errorf("failed to create user credentials: %w", err)
 	}
 
-	_, err = h.userRepository.CreateUser(ctx, creds, now)
+	err = h.userRepository.CreateUser(ctx, creds, now)
 	if err != nil {
 		if errors.Is(err, userdb.LoginUniqueConstraintViolatedError) {
 			return Response{}, domainerrors.LoginAlreadyTakenError(req.Login)

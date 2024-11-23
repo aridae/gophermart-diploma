@@ -5,9 +5,12 @@ import (
 	"crypto/rand"
 	"github.com/aridae/gophermart-diploma/internal/auth/authmw"
 	"github.com/aridae/gophermart-diploma/internal/config"
+	"github.com/aridae/gophermart-diploma/internal/database"
 	"github.com/aridae/gophermart-diploma/internal/jwt"
 	"github.com/aridae/gophermart-diploma/internal/logger"
+	orderdb "github.com/aridae/gophermart-diploma/internal/repo/order-db"
 	userdb "github.com/aridae/gophermart-diploma/internal/repo/user-db"
+	withdrawallogdb "github.com/aridae/gophermart-diploma/internal/repo/withdrawal-log-db"
 	httpserver "github.com/aridae/gophermart-diploma/internal/transport/http"
 	httpapi "github.com/aridae/gophermart-diploma/internal/transport/http/http-api"
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
@@ -34,39 +37,34 @@ import (
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		signalCh := make(chan os.Signal, 1)
-		signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGHUP)
-
-		<-signalCh
-
-		logger.Infof("Got signal, shutting down...")
-
-		// If you fail to cancel the context, the goroutine that WithCancel or WithTimeout created
-		// will be retained in memory indefinitely (until the program shuts down), causing a memory leak.
-		cancel()
-	}()
+	go watchTerminationSignals(cancel, os.Interrupt, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT, syscall.SIGHUP)
 
 	cnf := config.Obtain()
 
 	pgClient := mustInitPostgresClient(ctx, cnf)
-	pgTxManager := trman.Must(trmpgx.NewDefaultFactory(pgClient))
-	_ = pgTxManager // TODO add handler-level transactions
 
-	userRepository, err := userdb.NewRepo(ctx, pgClient, trmpgx.DefaultCtxGetter)
+	err := database.PrepareSchema(ctx, pgClient)
 	if err != nil {
-		logger.Fatalf("failed to initialize user repository: %v", err)
+		logger.Fatalf("failed to prepare database schema: %v", err)
 	}
+
+	pgTxManager := trman.Must(trmpgx.NewDefaultFactory(pgClient))
+
+	userRepository := userdb.NewRepository(pgClient, trmpgx.DefaultCtxGetter)
+
+	ordersRepository := orderdb.NewRepository(pgClient, trmpgx.DefaultCtxGetter)
+
+	withdrawalsLogsRepository := withdrawallogdb.NewRepository(pgClient, trmpgx.DefaultCtxGetter)
 
 	jwtService := mustInitJWTService(ctx, cnf)
 
 	getBalanceHandler := getbalance.NewHandler()
-	getOrdersHandler := getorders.NewHandler()
-	getWithdrawalsHistoryHandler := getwithdrawalshistory.NewHandler()
+	getOrdersHandler := getorders.NewHandler(ordersRepository)
+	getWithdrawalsHistoryHandler := getwithdrawalshistory.NewHandler(withdrawalsLogsRepository)
 	loginUserHandler := loginuser.NewHandler(userRepository, jwtService)
 	registerUserHandler := registeruser.NewHandler(userRepository, jwtService)
-	requestWithdrawalHandler := requestwithdrawal.NewHandler()
-	submitOrderHandler := submitorder.NewHandler()
+	requestWithdrawalHandler := requestwithdrawal.NewHandler(pgTxManager, ordersRepository, withdrawalsLogsRepository)
+	submitOrderHandler := submitorder.NewHandler(ordersRepository)
 
 	apiService := httpapi.NewAPIService(
 		getBalanceHandler,
@@ -155,4 +153,17 @@ func mustInitAdminServer(_ context.Context, swagger *openapi3.T, cnf *config.Con
 	)
 
 	return adminServer
+}
+
+func watchTerminationSignals(cancel func(), signals ...os.Signal) {
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, signals...)
+
+	<-signalCh
+
+	logger.Infof("Got signal, shutting down...")
+
+	// If you fail to cancel the context, the goroutine that WithCancel or WithTimeout created
+	// will be retained in memory indefinitely (until the program shuts down), causing a memory leak.
+	cancel()
 }

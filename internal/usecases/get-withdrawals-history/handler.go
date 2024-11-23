@@ -2,22 +2,34 @@ package getwithdrawalshistory
 
 import (
 	"context"
+	"fmt"
+	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
 	"github.com/aridae/gophermart-diploma/internal/model"
-	"time"
+	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 )
 
-type Handler struct{}
-
-func NewHandler() *Handler {
-	return &Handler{}
+type withdrawalsRepository interface {
+	GetByActor(ctx context.Context, actor model.User) ([]model.WithdrawalLog, error)
 }
 
-func (h *Handler) Handle(_ context.Context) ([]model.Withdrawal, error) {
-	return []model.Withdrawal{
-		{
-			OrderNumber: "111333222666",
-			ProcessedAt: time.Now().UTC(),
-			Sum:         12341,
-		},
-	}, nil
+type Handler struct {
+	withdrawalsRepository withdrawalsRepository
+}
+
+func NewHandler(withdrawalsRepository withdrawalsRepository) *Handler {
+	return &Handler{withdrawalsRepository: withdrawalsRepository}
+}
+
+func (h *Handler) Handle(ctx context.Context) ([]model.WithdrawalLog, error) {
+	user, authorized := authctx.GetUserFromContext(ctx)
+	if !authorized {
+		return nil, domainerrors.UnauthorizedError()
+	}
+
+	withdrawalsLogs, err := h.withdrawalsRepository.GetByActor(ctx, user)
+	if err != nil {
+		return nil, fmt.Errorf("withdrawalsRepository.GetByActor: %w", err)
+	}
+
+	return withdrawalsLogs, nil
 }

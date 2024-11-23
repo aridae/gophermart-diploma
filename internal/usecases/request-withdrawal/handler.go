@@ -2,19 +2,88 @@ package requestwithdrawal
 
 import (
 	"context"
+	"fmt"
+	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
+	"github.com/aridae/gophermart-diploma/internal/model"
+	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
+	"time"
 )
+
+type transactionManager interface {
+	Do(ctx context.Context, fn func(ctx context.Context) error) (err error)
+}
+
+type ordersRepository interface {
+	GetByNumbers(ctx context.Context, orderNumbers []string) ([]model.Order, error)
+}
+
+type withdrawalLogsRepository interface {
+	CreateWithdrawalLog(ctx context.Context, withdrawal model.WithdrawalLog, now time.Time) error
+}
+
+type Handler struct {
+	transactionManager       transactionManager
+	ordersRepository         ordersRepository
+	withdrawalLogsRepository withdrawalLogsRepository
+	now                      func() time.Time
+}
+
+func NewHandler(
+	transactionManager transactionManager,
+	ordersRepository ordersRepository,
+	withdrawalLogsRepository withdrawalLogsRepository,
+) *Handler {
+	return &Handler{
+		transactionManager:       transactionManager,
+		ordersRepository:         ordersRepository,
+		withdrawalLogsRepository: withdrawalLogsRepository,
+		now:                      time.Now().UTC,
+	}
+}
 
 type Request struct {
 	OrderNumber string
-	Sum         float32
+	Sum         model.Money
 }
 
-type Handler struct{}
+func (h *Handler) Handle(ctx context.Context, req Request) error {
+	user, authorized := authctx.GetUserFromContext(ctx)
+	if !authorized {
+		return domainerrors.UnauthorizedError()
+	}
 
-func NewHandler() *Handler {
-	return &Handler{}
-}
+	now := h.now()
 
-func (h *Handler) Handle(_ context.Context, _ Request) error {
+	err := h.transactionManager.Do(ctx, func(ctx context.Context) error {
+		orders, txErr := h.ordersRepository.GetByNumbers(ctx, []string{req.OrderNumber})
+		if txErr != nil {
+			return fmt.Errorf("ordersRepository.GetByNumbers <number:%s>: %w", req.OrderNumber, txErr)
+		}
+
+		if len(orders) == 0 {
+			return domainerrors.OrderNotFoundError(req.OrderNumber)
+		}
+		order := orders[0]
+
+		if order.Owner.Login != user.Login {
+			return domainerrors.NoAccessToOrderError(req.OrderNumber)
+		}
+
+		txErr = h.withdrawalLogsRepository.CreateWithdrawalLog(ctx, model.WithdrawalLog{
+			Sum:         req.Sum,
+			OrderNumber: req.OrderNumber,
+			CreatedAt:   now,
+			Actor:       user,
+		}, now)
+		if txErr != nil {
+			return fmt.Errorf("withdrawalLogsRepository.CreateWithdrawalLog: %w", txErr)
+		}
+
+		return nil
+	})
+	if err != nil {
+		return fmt.Errorf("transaction failed with err: %w", err)
+	}
+
 	return nil
 }

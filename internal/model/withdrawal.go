@@ -2,8 +2,9 @@ package model
 
 import "time"
 
-type Withdrawal struct {
+type WithdrawalLog struct {
+	Sum         Money
 	OrderNumber string
-	ProcessedAt time.Time
-	Sum         float32
+	CreatedAt   time.Time
+	Actor       User
 }

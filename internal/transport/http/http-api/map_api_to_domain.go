@@ -1,6 +1,7 @@
 package http_api
 
 import (
+	"github.com/aridae/gophermart-diploma/internal/model"
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
 	loginuser "github.com/aridae/gophermart-diploma/internal/usecases/login-user"
 	registeruser "github.com/aridae/gophermart-diploma/internal/usecases/register-user"
@@ -24,6 +25,6 @@ func mapAPIToDomainRegisterRequest(r oapispec.PostUserRegisterJSONBody) register
 func mapAPIToDomainWithdrawalRequest(r oapispec.PostUserBalanceJSONBody) requestwithdrawal.Request {
 	return requestwithdrawal.Request{
 		OrderNumber: r.Order,
-		Sum:         r.Sum,
+		Sum:         model.NewMoney(r.Sum),
 	}
 }

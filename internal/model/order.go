@@ -4,6 +4,10 @@ import "time"
 
 type OrderStatus string
 
+func (s OrderStatus) String() string {
+	return string(s)
+}
+
 const (
 	OrderStatusInvalid    OrderStatus = "INVALID"
 	OrderStatusNew        OrderStatus = "NEW"
@@ -13,11 +17,12 @@ const (
 
 type OrderSubmit struct {
 	Number string
+	Owner  User
+	Status OrderStatus
 }
 
 type Order struct {
 	OrderSubmit
-	Accrual    *int
-	Status     OrderStatus
+	Accrual    *Money
 	UploadedAt time.Time
 }

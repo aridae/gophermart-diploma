@@ -10,10 +10,10 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-func (r *Repo) GetUserCredentials(ctx context.Context, login string) (*model.UserCredentials, error) {
+func (r *Repository) GetUserCredentials(ctx context.Context, login string) (*model.UserCredentials, error) {
 	queryable := r.txGetter.DefaultTrOrDB(ctx, r.db)
 
-	qb := baseSelectQuery.Where(squirrel.Eq{"login": login})
+	qb := baseSelectQuery.Where(squirrel.Eq{loginColumn: login})
 
 	sql, args, err := qb.ToSql()
 	if err != nil {

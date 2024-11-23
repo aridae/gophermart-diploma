@@ -7,15 +7,6 @@ import (
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 )
 
-type Request struct {
-	Login    string
-	Password string
-}
-
-type Response struct {
-	JWT string
-}
-
 type userRepository interface {
 	GetUserCredentials(ctx context.Context, login string) (*model.UserCredentials, error)
 }
@@ -37,6 +28,15 @@ func NewHandler(
 		userRepository: usersRepository,
 		jwtService:     jwtService,
 	}
+}
+
+type Request struct {
+	Login    string
+	Password string
+}
+
+type Response struct {
+	JWT string
 }
 
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {

@@ -7,6 +7,7 @@ require (
 	github.com/avito-tech/go-transaction-manager/drivers/pgxv5/v2 v2.0.0
 	github.com/avito-tech/go-transaction-manager/trm/v2 v2.0.0
 	github.com/caarlos0/env/v6 v6.10.1
+	github.com/flowchartsman/swaggerui v0.0.0-20221017034628-909ed4f3701b
 	github.com/georgysavva/scany/v2 v2.1.3
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
@@ -19,8 +20,8 @@ require (
 )
 
 require (
+	github.com/ShiraazMoollatjie/goluhn v0.0.0-20211017190329-0d86158c056a // indirect
 	github.com/dprotaso/go-yit v0.0.0-20220510233725-9ba8df137936 // indirect
-	github.com/flowchartsman/swaggerui v0.0.0-20221017034628-909ed4f3701b // indirect
 	github.com/go-openapi/jsonpointer v0.21.0 // indirect
 	github.com/go-openapi/swag v0.23.0 // indirect
 	github.com/gorilla/mux v1.8.1 // indirect
