@@ -1,4 +1,4 @@
-package http_api
+package httpapi
 
 import (
 	getbalance "github.com/aridae/gophermart-diploma/internal/usecases/get-balance"

@@ -9,3 +9,11 @@ func To[T comparable](v T, nilifs ...T) *T {
 
 	return &v
 }
+
+func Deref[T comparable](v *T, fallback T) T {
+	if v == nil {
+		return fallback
+	}
+
+	return *v
+}

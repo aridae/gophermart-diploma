@@ -1,4 +1,4 @@
-package http_api
+package httpapi
 
 import (
 	"encoding/json"
@@ -13,7 +13,7 @@ func (s *ApiService) PostUserRegister(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&signupReq)
 	if err != nil {
-		mustPresentJSONError(err, w)
+		mustPresentJSONErrorWithCode(err, w, http.StatusBadRequest)
 		return
 	}
 

@@ -1,6 +1,9 @@
 package domainerrors
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/aridae/gophermart-diploma/internal/model"
+)
 
 const (
 	UnauthorizedErrorCode = iota + 1
@@ -8,7 +11,7 @@ const (
 	InvalidOrderNumberErrorCode
 	OrderNumberAlreadySubmittedErrorCode
 	InvalidUserCredentialsErrorCode
-	InsufficientFundsBalance
+	InsufficientOrderAccrual
 	NoAccessToOrder
 	OrderNotFoundErrorCode
 )
@@ -57,10 +60,10 @@ func OrderNumberAlreadySubmittedError(number string) error {
 	}
 }
 
-func InsufficientFundsBalanceError(balance float32, withdrawal float32) error {
+func InsufficientOrderAccrualError(number string, accrual model.Money, withdrawal model.Money) error {
 	return DomainError{
-		msg:  fmt.Sprintf("Insufficient funds balance %.2f, withrawal request for the sum %.2f terminated", balance, withdrawal),
-		Code: InsufficientFundsBalance,
+		msg:  fmt.Sprintf("Insufficient accrual %.2f for order number %s, withrawal request for the sum %.2f terminated", accrual.Float32(), number, withdrawal.Float32()),
+		Code: InsufficientOrderAccrual,
 	}
 }
 

@@ -1,4 +1,4 @@
-package http_api
+package httpapi
 
 import (
 	"encoding/json"
@@ -6,6 +6,7 @@ import (
 )
 
 func (s *ApiService) GetUserBalance(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
 	ctx := r.Context()
 
 	domainBalance, err := s.getBalanceHandler.Handle(ctx)

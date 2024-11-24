@@ -1,4 +1,4 @@
-package http_api
+package httpapi
 
 import (
 	"github.com/aridae/gophermart-diploma/internal/model"

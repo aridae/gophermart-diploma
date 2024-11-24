@@ -6,6 +6,7 @@ import (
 	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
+	"github.com/aridae/gophermart-diploma/pkg/pointer"
 	"time"
 )
 
@@ -67,6 +68,11 @@ func (h *Handler) Handle(ctx context.Context, req Request) error {
 
 		if order.Owner.Login != user.Login {
 			return domainerrors.NoAccessToOrderError(req.OrderNumber)
+		}
+
+		orderAccrual := pointer.Deref(order.Accrual, model.NewMoney(0))
+		if orderAccrual.Less(req.Sum) {
+			return domainerrors.InsufficientOrderAccrualError(req.OrderNumber, orderAccrual, req.Sum)
 		}
 
 		txErr = h.withdrawalLogsRepository.CreateWithdrawalLog(ctx, model.WithdrawalLog{

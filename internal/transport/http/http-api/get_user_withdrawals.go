@@ -1,4 +1,4 @@
-package http_api
+package httpapi
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 )
 
 func (s *ApiService) GetUserWithdrawals(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
 	ctx := r.Context()
 
 	domainWithdrawals, err := s.getWithdrawalsHistoryHandler.Handle(ctx)

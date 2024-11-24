@@ -1,14 +1,10 @@
-package http_api
+package httpapi
 
 import (
-	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/aridae/gophermart-diploma/internal/model"
-	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
 	"github.com/aridae/gophermart-diploma/pkg/pointer"
-	"net/http"
 )
 
 func mapDomainToAPIWithdrawal(withdrawal model.WithdrawalLog) oapispec.Withdrawal {
@@ -59,36 +55,4 @@ func mapDomainToAPIBalance(balance model.Balance) oapispec.Balance {
 		Current:   balance.Current.Float32(),
 		Withdrawn: balance.Withdrawn.Float32(),
 	}
-}
-
-func mapDomainErrorToHTTPStatusCode(err error) (int, string) {
-	if domerror := new(domainerrors.DomainError); errors.As(err, domerror) {
-		switch domerror.Code {
-		case domainerrors.UnauthorizedErrorCode:
-			return http.StatusUnauthorized, domerror.Error()
-		}
-	}
-
-	return http.StatusInternalServerError, err.Error()
-}
-
-func mustPresentJSONError(err error, w http.ResponseWriter) {
-	code, msg := mapDomainErrorToHTTPStatusCode(err)
-
-	jsonErr := struct {
-		Message string `json:"message"`
-	}{
-		Message: msg,
-	}
-
-	payload, _ := json.Marshal(jsonErr)
-
-	_, _ = w.Write(payload)
-	w.WriteHeader(code)
-}
-
-func mustPresentTextError(err error, w http.ResponseWriter) {
-	code, msg := mapDomainErrorToHTTPStatusCode(err)
-	_, _ = w.Write([]byte(msg))
-	w.WriteHeader(code)
 }
