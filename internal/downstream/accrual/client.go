@@ -3,11 +3,9 @@ package accrual
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/go-retryablehttp"
 	"io"
 	"net/http"
-	"path"
-
-	"github.com/hashicorp/go-retryablehttp"
 )
 
 type Client struct {
@@ -34,7 +32,7 @@ func (c *Client) doRequest(
 	body io.Reader,
 	presentError func(status string, code int) error,
 ) ([]byte, error) {
-	req, err := http.NewRequestWithContext(ctx, method, path.Join(c.address, url), body)
+	req, err := http.NewRequestWithContext(ctx, method, c.address+url, body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create http request: %w", err)
 	}
