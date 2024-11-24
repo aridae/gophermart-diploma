@@ -27,5 +27,5 @@ func NewMoney(money float32) Money {
 }
 
 func NewMoneyFromCents(cents int64) Money {
-	return Money(float32(cents / 100))
+	return Money(float32(cents) / 100)
 }
