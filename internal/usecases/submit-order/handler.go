@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ShiraazMoollatjie/goluhn"
 	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
@@ -100,5 +99,26 @@ func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 }
 
 func validateOrderNumber(number string) error {
-	return goluhn.Validate(number)
+	if !isLuhnValid(number) {
+		return fmt.Errorf("invalid order number: %s", number)
+	}
+
+	return nil
+}
+
+func isLuhnValid(number string) bool {
+	sum := number[len(number)-1] - '0'
+
+	for i := len(number) - 2; i >= 0; i-- {
+		n := number[i] - '0'
+		if i%2 == len(number)%2 {
+			n *= 2
+			if n > 9 {
+				n -= 9
+			}
+		}
+		sum += n
+	}
+
+	return sum%10 == 0
 }
