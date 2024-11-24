@@ -3,12 +3,12 @@ package orderaccrualsync
 import (
 	"context"
 	"fmt"
-	orderrepo "github.com/aridae/gophermart-diploma/internal/repos/order-repo"
 	"time"
 
 	"github.com/aridae/gophermart-diploma/internal/downstream/accrual"
 	"github.com/aridae/gophermart-diploma/internal/logger"
 	"github.com/aridae/gophermart-diploma/internal/model"
+	orderrepo "github.com/aridae/gophermart-diploma/internal/repos/order-repo"
 )
 
 var (

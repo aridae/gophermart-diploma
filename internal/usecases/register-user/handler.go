@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	userrepo "github.com/aridae/gophermart-diploma/internal/repos/user-repo"
 	"time"
 
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
+	userrepo "github.com/aridae/gophermart-diploma/internal/repos/user-repo"
 )
 
 type userRepository interface {

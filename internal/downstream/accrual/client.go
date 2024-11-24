@@ -3,9 +3,10 @@ package accrual
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/go-retryablehttp"
 	"io"
 	"net/http"
+
+	"github.com/hashicorp/go-retryablehttp"
 )
 
 type Client struct {

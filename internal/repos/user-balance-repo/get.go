@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/aridae/gophermart-diploma/internal/database"
 
 	"github.com/Masterminds/squirrel"
+	"github.com/aridae/gophermart-diploma/internal/database"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5"

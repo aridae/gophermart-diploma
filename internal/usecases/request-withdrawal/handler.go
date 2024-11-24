@@ -3,12 +3,12 @@ package requestwithdrawal
 import (
 	"context"
 	"fmt"
-	orderrepo "github.com/aridae/gophermart-diploma/internal/repos/order-repo"
 	"time"
 
 	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
+	orderrepo "github.com/aridae/gophermart-diploma/internal/repos/order-repo"
 	"github.com/aridae/gophermart-diploma/pkg/pointer"
 )
 

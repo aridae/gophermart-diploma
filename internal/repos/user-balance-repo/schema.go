@@ -2,6 +2,7 @@ package userbalancerepo
 
 import (
 	"fmt"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/aridae/gophermart-diploma/internal/database"
 )
