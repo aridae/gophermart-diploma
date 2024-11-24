@@ -1,19 +1,26 @@
 package userbalancerepo
 
 import (
-	"fmt"
-
 	"github.com/Masterminds/squirrel"
 	"github.com/aridae/gophermart-diploma/internal/database"
 )
 
 var psql = squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar)
 
+var currentBalanceSubquery, _, _ = psql.Select(
+	"owner_login",
+	"sum(accrual_cents) as current_balance_cents",
+).From(database.OrdersTable).GroupBy("owner_login").ToSql()
+
+var withdrawnSubquery, _, _ = psql.Select(
+	"actor_login",
+	"sum(sum_cents) as withdrawn_cents",
+).From(database.WithdrawalsTable).GroupBy("actor_login").ToSql()
+
 var baseSelectQuery = psql.Select(
-	fmt.Sprintf("%s.login as %s", database.UsersTable, "user_login"),
-	fmt.Sprintf("sum(%s.accrual_cents) as %s", database.OrdersTable, "current_balance_cents"),
-	fmt.Sprintf("sum(%s.sum_cents) as %s", database.WithdrawalsTable, "withdrawn_cents"),
+	"users.login as user_login",
+	"ws.withdrawn_cents as withdrawn_cents",
+	"cbs.current_balance_cents as current_balance_cents",
 ).From(database.UsersTable).
-	Join(database.OrdersTable + " ON " + database.UsersTable + ".login = " + database.OrdersTable + ".owner_login").
-	LeftJoin(database.WithdrawalsTable + " ON " + database.OrdersTable + ".order_number = " + database.WithdrawalsTable + ".order_number").
-	GroupBy(fmt.Sprintf("%s.login", database.UsersTable))
+	Join("(" + currentBalanceSubquery + ") cbs ON " + database.UsersTable + ".login = cbs.owner_login").
+	LeftJoin("(" + withdrawnSubquery + ") ws ON " + database.UsersTable + ".login = ws.actor_login")
