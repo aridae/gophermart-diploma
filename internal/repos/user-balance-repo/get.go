@@ -6,7 +6,6 @@ import (
 	"fmt"
 
 	"github.com/Masterminds/squirrel"
-	"github.com/aridae/gophermart-diploma/internal/database"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	"github.com/georgysavva/scany/v2/pgxscan"
 	"github.com/jackc/pgx/v5"
@@ -15,7 +14,7 @@ import (
 func (r *Repository) GetUserBalance(ctx context.Context, user model.User) (model.Balance, error) {
 	queryable := r.txGetter.DefaultTrOrDB(ctx, r.db)
 
-	qb := baseSelectQuery.Where(squirrel.Eq{fmt.Sprintf("%s.login", database.UsersTable): user.Login})
+	qb := baseSelectQuery.Where(squirrel.Eq{"o.owner_login": user.Login})
 
 	sql, args, err := qb.ToSql()
 	if err != nil {
