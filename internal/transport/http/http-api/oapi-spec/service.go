@@ -57,8 +57,8 @@ type Withdrawal struct {
 	Sum         float32   `json:"sum"`
 }
 
-// PostUserBalanceJSONBody defines parameters for PostUserBalance.
-type PostUserBalanceJSONBody struct {
+// PostUserBalanceWithdrawJSONBody defines parameters for PostUserBalanceWithdraw.
+type PostUserBalanceWithdrawJSONBody struct {
 	Order string  `json:"order"`
 	Sum   float32 `json:"sum"`
 }
@@ -78,8 +78,8 @@ type PostUserRegisterJSONBody struct {
 	Password string `json:"password"`
 }
 
-// PostUserBalanceJSONRequestBody defines body for PostUserBalance for application/json ContentType.
-type PostUserBalanceJSONRequestBody PostUserBalanceJSONBody
+// PostUserBalanceWithdrawJSONRequestBody defines body for PostUserBalanceWithdraw for application/json ContentType.
+type PostUserBalanceWithdrawJSONRequestBody PostUserBalanceWithdrawJSONBody
 
 // PostUserLoginJSONRequestBody defines body for PostUserLogin for application/json ContentType.
 type PostUserLoginJSONRequestBody PostUserLoginJSONBody
@@ -96,8 +96,8 @@ type ServerInterface interface {
 	// (GET /user/balance)
 	GetUserBalance(w http.ResponseWriter, r *http.Request)
 	// Request withdrawal
-	// (POST /user/balance)
-	PostUserBalance(w http.ResponseWriter, r *http.Request)
+	// (POST /user/balance/withdraw)
+	PostUserBalanceWithdraw(w http.ResponseWriter, r *http.Request)
 	// Authenticate an existing user
 	// (POST /user/login)
 	PostUserLogin(w http.ResponseWriter, r *http.Request)
@@ -144,8 +144,8 @@ func (siw *ServerInterfaceWrapper) GetUserBalance(w http.ResponseWriter, r *http
 	handler.ServeHTTP(w, r)
 }
 
-// PostUserBalance operation middleware
-func (siw *ServerInterfaceWrapper) PostUserBalance(w http.ResponseWriter, r *http.Request) {
+// PostUserBalanceWithdraw operation middleware
+func (siw *ServerInterfaceWrapper) PostUserBalanceWithdraw(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
 
@@ -154,7 +154,7 @@ func (siw *ServerInterfaceWrapper) PostUserBalance(w http.ResponseWriter, r *htt
 	r = r.WithContext(ctx)
 
 	handler := http.Handler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		siw.Handler.PostUserBalance(w, r)
+		siw.Handler.PostUserBalanceWithdraw(w, r)
 	}))
 
 	for _, middleware := range siw.HandlerMiddlewares {
@@ -373,7 +373,7 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 	}
 
 	m.HandleFunc("GET "+options.BaseURL+"/user/balance", wrapper.GetUserBalance)
-	m.HandleFunc("POST "+options.BaseURL+"/user/balance", wrapper.PostUserBalance)
+	m.HandleFunc("POST "+options.BaseURL+"/user/balance/withdraw", wrapper.PostUserBalanceWithdraw)
 	m.HandleFunc("POST "+options.BaseURL+"/user/login", wrapper.PostUserLogin)
 	m.HandleFunc("GET "+options.BaseURL+"/user/orders", wrapper.GetUserOrders)
 	m.HandleFunc("POST "+options.BaseURL+"/user/orders", wrapper.PostUserOrders)
@@ -386,31 +386,31 @@ func HandlerWithOptions(si ServerInterface, options StdHTTPServerOptions) http.H
 // Base64 encoded, gzipped, json marshaled Swagger object
 var swaggerSpec = []string{
 
-	"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",
+	"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",
 }
 
 // GetSwagger returns the content of the embedded swagger specification file

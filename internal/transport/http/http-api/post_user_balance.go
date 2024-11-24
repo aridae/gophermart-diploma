@@ -7,10 +7,10 @@ import (
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
 )
 
-func (s *ApiService) PostUserBalance(w http.ResponseWriter, r *http.Request) {
+func (s *ApiService) PostUserBalanceWithdraw(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	apiReq := oapispec.PostUserBalanceJSONBody{}
+	apiReq := oapispec.PostUserBalanceWithdrawJSONBody{}
 
 	err := json.NewDecoder(r.Body).Decode(&apiReq)
 	if err != nil {
