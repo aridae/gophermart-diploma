@@ -107,18 +107,19 @@ func validateOrderNumber(number string) error {
 }
 
 func isLuhnValid(number string) bool {
-	sum := number[len(number)-1] - '0'
-
-	for i := len(number) - 2; i >= 0; i-- {
-		n := number[i] - '0'
-		if i%2 == len(number)%2 {
-			n *= 2
-			if n > 9 {
-				n -= 9
+	sum, length := 0, len(number)
+	if length < 2 {
+		return false
+	}
+	for index, num := range number {
+		dig := int(num - '0')
+		if length%2 == index%2 {
+			dig *= 2
+			if dig > 9 {
+				dig = dig%10 + dig/10
 			}
 		}
-		sum += n
+		sum += dig
 	}
-
 	return sum%10 == 0
 }
