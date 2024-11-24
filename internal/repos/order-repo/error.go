@@ -1,4 +1,4 @@
-package orderdb
+package orderrepo
 
 import "errors"
 

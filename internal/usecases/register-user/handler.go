@@ -4,11 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	userrepo "github.com/aridae/gophermart-diploma/internal/repos/user-repo"
 	"time"
 
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
-	userdb "github.com/aridae/gophermart-diploma/internal/repos/user-db"
 )
 
 type userRepository interface {
@@ -55,7 +55,7 @@ func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 
 	err = h.userRepository.CreateUser(ctx, creds, now)
 	if err != nil {
-		if errors.Is(err, userdb.LoginUniqueConstraintViolatedError) {
+		if errors.Is(err, userrepo.LoginUniqueConstraintViolatedError) {
 			return Response{}, domainerrors.LoginAlreadyTakenError(req.Login)
 		}
 

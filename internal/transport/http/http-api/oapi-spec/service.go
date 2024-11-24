@@ -1,3 +1,4 @@
+//nolint:all
 //go:build go1.22
 
 // Package apispec provides primitives to interact with the openapi HTTP API.

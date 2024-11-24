@@ -18,6 +18,10 @@ func (m Money) Less(target Money) bool {
 	return m.Cents() < target.Cents()
 }
 
+func (m Money) Sub(target Money) Money {
+	return NewMoneyFromCents(m.Cents() - target.Cents())
+}
+
 func NewMoney(money float32) Money {
 	return Money(money)
 }

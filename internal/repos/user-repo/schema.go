@@ -1,4 +1,4 @@
-package userdb
+package userrepo
 
 import (
 	"github.com/Masterminds/squirrel"

@@ -1,4 +1,4 @@
-package withdrawallogdb
+package userrepo
 
 import (
 	"context"
@@ -26,7 +26,7 @@ type Repository struct {
 	txGetter sqlTransaxtionManager
 }
 
-func NewRepository(
+func New(
 	db sqlQueryable,
 	txGetter sqlTransaxtionManager,
 ) *Repository {

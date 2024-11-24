@@ -3,12 +3,12 @@ package orderaccrualsync
 import (
 	"context"
 	"fmt"
+	orderrepo "github.com/aridae/gophermart-diploma/internal/repos/order-repo"
 	"time"
 
 	"github.com/aridae/gophermart-diploma/internal/downstream/accrual"
 	"github.com/aridae/gophermart-diploma/internal/logger"
 	"github.com/aridae/gophermart-diploma/internal/model"
-	orderdb "github.com/aridae/gophermart-diploma/internal/repos/order-db"
 )
 
 var (
@@ -20,8 +20,8 @@ type orderAccrualService interface {
 }
 
 type ordersService interface {
-	Search(ctx context.Context, filter orderdb.Filter, pagination orderdb.Pagination) ([]model.Order, error)
-	UpdateOrder(ctx context.Context, orderNumber string, setters ...orderdb.Setter) error
+	Search(ctx context.Context, filter orderrepo.Filter, pagination orderrepo.Pagination) ([]model.Order, error)
+	UpdateOrder(ctx context.Context, orderNumber string, setters ...orderrepo.Setter) error
 }
 
 type Syncer struct {
@@ -72,7 +72,7 @@ func (s *Syncer) Run(ctx context.Context) {
 }
 
 func (s *Syncer) runSyncing(ctx context.Context, queue chan model.Order) error {
-	ordersToSync, err := s.loadOrders(ctx, orderdb.Filter{Statuses: nonTerminalOrderStatuses})
+	ordersToSync, err := s.loadOrders(ctx, orderrepo.Filter{Statuses: nonTerminalOrderStatuses})
 	if err != nil {
 		return fmt.Errorf("loadOrders: %w", err)
 	}
@@ -84,12 +84,12 @@ func (s *Syncer) runSyncing(ctx context.Context, queue chan model.Order) error {
 	return nil
 }
 
-func (s *Syncer) loadOrders(ctx context.Context, filter orderdb.Filter) ([]model.Order, error) {
+func (s *Syncer) loadOrders(ctx context.Context, filter orderrepo.Filter) ([]model.Order, error) {
 	limit := 100
 	orders := make([]model.Order, 0)
 
 	for page := 1; ; page++ {
-		ordersPage, err := s.ordersService.Search(ctx, filter, orderdb.Pagination{Page: page, Limit: limit})
+		ordersPage, err := s.ordersService.Search(ctx, filter, orderrepo.Pagination{Page: page, Limit: limit})
 		if err != nil {
 			return nil, fmt.Errorf("ordersService.Search: %w", err)
 		}
@@ -112,8 +112,8 @@ func (s *Syncer) syncOrder(ctx context.Context, order model.Order) error {
 	}
 
 	err = s.ordersService.UpdateOrder(ctx, order.Number,
-		orderdb.SetOrderStatus(orderAccrual.Status),
-		orderdb.SetOrderAccrual(orderAccrual.Accrual),
+		orderrepo.SetOrderStatus(orderAccrual.Status),
+		orderrepo.SetOrderAccrual(orderAccrual.Accrual),
 	)
 	if err != nil {
 		return fmt.Errorf("ordersService.UpdateOrder: %w", err)
