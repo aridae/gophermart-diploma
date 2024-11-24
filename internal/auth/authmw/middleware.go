@@ -3,10 +3,11 @@ package authmw
 import (
 	"context"
 	"errors"
-	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
-	"github.com/aridae/gophermart-diploma/internal/model"
 	"net/http"
 	"slices"
+
+	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
+	"github.com/aridae/gophermart-diploma/internal/model"
 )
 
 var (

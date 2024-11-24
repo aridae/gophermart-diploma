@@ -3,11 +3,12 @@ package requestwithdrawal
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 	"github.com/aridae/gophermart-diploma/pkg/pointer"
-	"time"
 )
 
 type transactionManager interface {

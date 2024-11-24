@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/aridae/gophermart-diploma/internal/database"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
-	"time"
 )
 
 func (r *Repository) CreateUser(ctx context.Context, user model.UserCredentials, now time.Time) error {

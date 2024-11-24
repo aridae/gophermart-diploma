@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	"github.com/georgysavva/scany/v2/pgxscan"

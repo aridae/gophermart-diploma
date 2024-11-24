@@ -2,8 +2,9 @@ package httpapi
 
 import (
 	"encoding/json"
-	"github.com/aridae/gophermart-diploma/pkg/slice"
 	"net/http"
+
+	"github.com/aridae/gophermart-diploma/pkg/slice"
 )
 
 func (s *ApiService) GetUserWithdrawals(w http.ResponseWriter, r *http.Request) {

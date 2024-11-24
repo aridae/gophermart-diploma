@@ -3,8 +3,9 @@ package http
 import (
 	"context"
 	"fmt"
-	"github.com/aridae/gophermart-diploma/internal/logger"
 	"net/http"
+
+	"github.com/aridae/gophermart-diploma/internal/logger"
 )
 
 type Server struct {

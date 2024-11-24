@@ -3,6 +3,7 @@ package jwt
 import (
 	"context"
 	"fmt"
+
 	"github.com/aridae/gophermart-diploma/internal/model"
 	jwtv5 "github.com/golang-jwt/jwt/v5"
 )

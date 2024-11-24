@@ -1,8 +1,9 @@
 package withdrawallogdb
 
 import (
-	"github.com/aridae/gophermart-diploma/internal/model"
 	"time"
+
+	"github.com/aridae/gophermart-diploma/internal/model"
 )
 
 type withdrawalLogDTO struct {

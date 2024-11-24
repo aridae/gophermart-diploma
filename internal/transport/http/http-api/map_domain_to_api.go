@@ -2,6 +2,7 @@ package httpapi
 
 import (
 	"fmt"
+
 	"github.com/aridae/gophermart-diploma/internal/model"
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
 	"github.com/aridae/gophermart-diploma/pkg/pointer"

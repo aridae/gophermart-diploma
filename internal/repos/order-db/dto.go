@@ -1,9 +1,10 @@
 package orderdb
 
 import (
+	"time"
+
 	"github.com/aridae/gophermart-diploma/internal/model"
 	"github.com/aridae/gophermart-diploma/pkg/pointer"
-	"time"
 )
 
 type orderDTO struct {

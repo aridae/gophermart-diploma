@@ -1,7 +1,8 @@
-package orderdb
+package userdb
 
 import (
 	"context"
+
 	trmpgx "github.com/avito-tech/go-transaction-manager/drivers/pgxv5/v2"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"

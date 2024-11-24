@@ -2,8 +2,9 @@ package httpapi
 
 import (
 	"encoding/json"
-	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
 	"net/http"
+
+	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
 )
 
 func (s *ApiService) PostUserLogin(w http.ResponseWriter, r *http.Request) {

@@ -2,6 +2,7 @@ package getbalance
 
 import (
 	"context"
+
 	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"

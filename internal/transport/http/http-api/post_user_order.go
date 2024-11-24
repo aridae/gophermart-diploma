@@ -1,9 +1,10 @@
 package httpapi
 
 import (
-	submitorder "github.com/aridae/gophermart-diploma/internal/usecases/submit-order"
 	"io"
 	"net/http"
+
+	submitorder "github.com/aridae/gophermart-diploma/internal/usecases/submit-order"
 )
 
 func (s *ApiService) PostUserOrders(w http.ResponseWriter, r *http.Request) {

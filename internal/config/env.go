@@ -2,14 +2,18 @@ package config
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/caarlos0/env/v6"
 )
 
 type environs struct {
 	AddressOverride              *string `env:"RUN_ADDRESS"`
 	DatabaseDsnOverride          *string `env:"DATABASE_URI"`
-	AccuralSystemAddressOverride *string `env:"ACCRUAL_SYSTEM_ADDRESS"`
+	AccrualSystemAddressOverride *string `env:"ACCRUAL_SYSTEM_ADDRESS"`
 	JWTSecretKey                 *string `env:"JWT_SECRET_KEY"`
+	AccrualSyncWorkersPoolSize   *int    `env:"ACCRUAL_SYNC_WORKERS_COUNT"`
+	AccrualSyncIntervalSeconds   *int    `env:"ACCRUAL_SYNC_INTERVAL_SEC"`
 }
 
 func readEnv() (environs, error) {
@@ -32,11 +36,19 @@ func (e environs) override(cfg *Config) {
 		cfg.overrideDatabaseDNSIfNotDefault(*e.DatabaseDsnOverride, "env")
 	}
 
-	if e.AccuralSystemAddressOverride != nil {
-		cfg.overrideAccuralSystemEndpointIfNotDefault(*e.AccuralSystemAddressOverride, "env")
+	if e.AccrualSystemAddressOverride != nil {
+		cfg.overrideAccrualSystemEndpointIfNotDefault(*e.AccrualSystemAddressOverride, "env")
 	}
 
 	if e.JWTSecretKey != nil {
 		cfg.overrideJWTKeyIfNotDefault(*e.JWTSecretKey, "env")
+	}
+
+	if e.AccrualSyncWorkersPoolSize != nil {
+		cfg.overrideAccrualSyncWorkersPoolSizeIfNotDefault(*e.AccrualSyncWorkersPoolSize, "env")
+	}
+
+	if e.AccrualSyncIntervalSeconds != nil {
+		cfg.overrideAccrualSyncIntervalIfNotDefault(time.Second*time.Duration(*e.AccrualSyncIntervalSeconds), "env")
 	}
 }

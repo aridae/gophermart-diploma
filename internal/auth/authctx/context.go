@@ -2,11 +2,14 @@ package authctx
 
 import (
 	"context"
+
 	"github.com/aridae/gophermart-diploma/internal/model"
 )
 
+type contextKey string
+
 const (
-	_userCtxKey = "USER_CONTEXT_KEY"
+	_userCtxKey contextKey = "USER_CONTEXT_KEY"
 )
 
 func ContextWithUser(ctx context.Context, user model.User) context.Context {

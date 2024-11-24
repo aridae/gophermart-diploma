@@ -3,9 +3,9 @@ package postgres
 import (
 	"context"
 	"fmt"
-	"github.com/aridae/gophermart-diploma/internal/logger"
 	"time"
 
+	"github.com/aridae/gophermart-diploma/internal/logger"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 

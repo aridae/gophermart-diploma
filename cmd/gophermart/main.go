@@ -3,14 +3,22 @@ package main
 import (
 	"context"
 	"crypto/rand"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
 	"github.com/aridae/gophermart-diploma/internal/auth/authmw"
 	"github.com/aridae/gophermart-diploma/internal/config"
 	"github.com/aridae/gophermart-diploma/internal/database"
+	"github.com/aridae/gophermart-diploma/internal/downstream/accrual"
 	"github.com/aridae/gophermart-diploma/internal/jwt"
 	"github.com/aridae/gophermart-diploma/internal/logger"
-	orderdb "github.com/aridae/gophermart-diploma/internal/repo/order-db"
-	userdb "github.com/aridae/gophermart-diploma/internal/repo/user-db"
-	withdrawallogdb "github.com/aridae/gophermart-diploma/internal/repo/withdrawal-log-db"
+	orderaccrualsync "github.com/aridae/gophermart-diploma/internal/order-accrual-sync"
+	orderdb "github.com/aridae/gophermart-diploma/internal/repos/order-db"
+	userdb "github.com/aridae/gophermart-diploma/internal/repos/user-db"
+	withdrawallogdb "github.com/aridae/gophermart-diploma/internal/repos/withdrawal-log-db"
 	httpserver "github.com/aridae/gophermart-diploma/internal/transport/http"
 	httpapi "github.com/aridae/gophermart-diploma/internal/transport/http/http-api"
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
@@ -28,11 +36,6 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/getkin/kin-openapi/openapi3filter"
 	oapimw "github.com/oapi-codegen/nethttp-middleware"
-	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 func main() {
@@ -65,6 +68,10 @@ func main() {
 	registerUserHandler := registeruser.NewHandler(userRepository, jwtService)
 	requestWithdrawalHandler := requestwithdrawal.NewHandler(pgTxManager, ordersRepository, withdrawalsLogsRepository)
 	submitOrderHandler := submitorder.NewHandler(pgTxManager, ordersRepository)
+
+	orderAccrualService := accrual.NewClient(cnf.AccuralSystemAddress)
+	orderAccrualSyncer := orderaccrualsync.New(orderAccrualService, ordersRepository, cnf.AccrualSyncInterval, cnf.AccrualSyncWorkersPoolSize)
+	go orderAccrualSyncer.Run(ctx)
 
 	apiService := httpapi.NewAPIService(
 		getBalanceHandler,

@@ -2,6 +2,7 @@ package domainerrors
 
 import (
 	"fmt"
+
 	"github.com/aridae/gophermart-diploma/internal/model"
 )
 

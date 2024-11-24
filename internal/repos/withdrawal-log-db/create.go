@@ -3,9 +3,10 @@ package withdrawallogdb
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/aridae/gophermart-diploma/internal/database"
 	"github.com/aridae/gophermart-diploma/internal/model"
-	"time"
 )
 
 func (r *Repository) CreateWithdrawalLog(ctx context.Context, withdrawal model.WithdrawalLog, now time.Time) error {

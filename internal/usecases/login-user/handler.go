@@ -3,6 +3,7 @@ package loginuser
 import (
 	"context"
 	"fmt"
+
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 )

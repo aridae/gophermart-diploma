@@ -3,6 +3,7 @@ package withdrawallogdb
 import (
 	"context"
 	"fmt"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	"github.com/aridae/gophermart-diploma/pkg/slice"

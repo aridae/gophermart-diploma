@@ -3,8 +3,9 @@ package httpapi
 import (
 	"encoding/json"
 	"errors"
-	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 	"net/http"
+
+	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 )
 
 func mapDomainErrorToHTTPStatusCode(err error) (int, string) {
