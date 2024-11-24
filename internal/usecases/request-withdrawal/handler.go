@@ -87,8 +87,8 @@ func (h *Handler) Handle(ctx context.Context, req Request) error {
 		txErr = h.withdrawalLogsRepository.CreateWithdrawalLog(ctx, model.WithdrawalLog{
 			Sum:         req.Sum,
 			OrderNumber: req.OrderNumber,
+			Actor:       order.Owner,
 			CreatedAt:   now,
-			Actor:       user,
 		}, now)
 		if txErr != nil {
 			return fmt.Errorf("withdrawalLogsRepository.CreateWithdrawalLog: %w", txErr)
