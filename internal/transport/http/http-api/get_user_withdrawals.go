@@ -23,4 +23,11 @@ func (s *ApiService) GetUserWithdrawals(w http.ResponseWriter, r *http.Request) 
 		mustPresentJSONError(err, w)
 		return
 	}
+
+	if len(apiWithdrawals) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

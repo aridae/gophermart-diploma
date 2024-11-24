@@ -27,4 +27,11 @@ func (s *ApiService) GetUserOrders(w http.ResponseWriter, r *http.Request) {
 		mustPresentJSONError(err, w)
 		return
 	}
+
+	if len(apiOrders) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
 }

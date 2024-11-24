@@ -15,11 +15,23 @@ func (s *ApiService) PostUserOrders(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = s.submitOrderHandler.Handle(ctx, submitorder.Request{OrderNumber: string(apiOrderNum)})
+	resp, err := s.submitOrderHandler.Handle(ctx, submitorder.Request{OrderNumber: string(apiOrderNum)})
 	if err != nil {
 		mustPresentJSONError(err, w)
 		return
 	}
+	httpStatusCode := mapResponseCode(resp.Code)
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(httpStatusCode)
+}
+
+func mapResponseCode(code submitorder.ResponseCode) int {
+	switch code {
+	case submitorder.OrderNumberAlreadyLoadedByThisOwner:
+		return http.StatusOK
+	case submitorder.OrderNumberAccepted:
+		return http.StatusAccepted
+	}
+
+	return http.StatusOK
 }
