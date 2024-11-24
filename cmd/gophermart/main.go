@@ -72,7 +72,7 @@ func main() {
 	requestWithdrawalHandler := requestwithdrawal.NewHandler(pgTxManager, ordersRepository, withdrawalsLogsRepository)
 	submitOrderHandler := submitorder.NewHandler(pgTxManager, ordersRepository)
 
-	orderAccrualService := accrual.NewClient(cnf.AccuralSystemAddress)
+	orderAccrualService := accrual.NewClient(cnf.AccrualSystemAddress)
 	orderAccrualSyncer := orderaccrualsync.New(orderAccrualService, ordersRepository, cnf.AccrualSyncInterval, cnf.AccrualSyncWorkersPoolSize)
 	go orderAccrualSyncer.Run(ctx)
 

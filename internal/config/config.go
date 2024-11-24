@@ -25,7 +25,7 @@ type Config struct {
 	DatabaseDsn         string
 	DatabaseMaxOpenConn int
 
-	AccuralSystemAddress string
+	AccrualSystemAddress string
 
 	JWTKey string
 
@@ -94,7 +94,7 @@ func (c *Config) overrideAccrualSystemEndpointIfNotDefault(addr string, source s
 	}
 
 	logger.Infof("overriding accrual system address from %s", source)
-	c.AccuralSystemAddress = addr
+	c.AccrualSystemAddress = addr
 }
 
 func (c *Config) overrideJWTKeyIfNotDefault(key string, source string) {
