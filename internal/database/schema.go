@@ -16,7 +16,7 @@ create table if not exists orders (
     owner_login text,
     accrual_cents bigint default 0,
     created_at time,
-    updated_at time,
+    updated_at time
 );
 
 create table if not exists users (
