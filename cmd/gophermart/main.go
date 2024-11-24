@@ -64,7 +64,7 @@ func main() {
 	loginUserHandler := loginuser.NewHandler(userRepository, jwtService)
 	registerUserHandler := registeruser.NewHandler(userRepository, jwtService)
 	requestWithdrawalHandler := requestwithdrawal.NewHandler(pgTxManager, ordersRepository, withdrawalsLogsRepository)
-	submitOrderHandler := submitorder.NewHandler(ordersRepository)
+	submitOrderHandler := submitorder.NewHandler(pgTxManager, ordersRepository)
 
 	apiService := httpapi.NewAPIService(
 		getBalanceHandler,
