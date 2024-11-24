@@ -15,5 +15,5 @@ var baseSelectQuery = psql.Select(
 	fmt.Sprintf("sum(%s.sum_cents) as %s", database.WithdrawalsTable, "withdrawn_cents"),
 ).From(database.UsersTable).
 	Join(database.OrdersTable + " ON " + database.UsersTable + ".login = " + database.OrdersTable + ".owner_login").
-	Join(database.WithdrawalsTable + " ON " + database.OrdersTable + ".order_number = " + database.WithdrawalsTable + ".order_number").
+	LeftJoin(database.WithdrawalsTable + " ON " + database.OrdersTable + ".order_number = " + database.WithdrawalsTable + ".order_number").
 	GroupBy(fmt.Sprintf("%s.login", database.UsersTable))
