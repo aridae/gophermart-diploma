@@ -4,9 +4,9 @@ const schemaDDL = `
 create table if not exists withdrawals (
     id serial,
     order_number text,
-    owner_login text,
+    actor_login text,
     sum_cents bigint,
-    created_at timestamp
+    requested_at timestamp
 );
 
 create table if not exists orders (
