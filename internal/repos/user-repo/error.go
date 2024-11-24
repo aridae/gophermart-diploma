@@ -1,4 +1,4 @@
-package userdb
+package userrepo
 
 import "errors"
 

@@ -16,9 +16,10 @@ import (
 	"github.com/aridae/gophermart-diploma/internal/jwt"
 	"github.com/aridae/gophermart-diploma/internal/logger"
 	orderaccrualsync "github.com/aridae/gophermart-diploma/internal/order-accrual-sync"
-	orderdb "github.com/aridae/gophermart-diploma/internal/repos/order-db"
-	userdb "github.com/aridae/gophermart-diploma/internal/repos/user-db"
-	withdrawallogdb "github.com/aridae/gophermart-diploma/internal/repos/withdrawal-log-db"
+	orderrepo "github.com/aridae/gophermart-diploma/internal/repos/order-repo"
+	userbalancerepo "github.com/aridae/gophermart-diploma/internal/repos/user-balance-repo"
+	userrepo "github.com/aridae/gophermart-diploma/internal/repos/user-repo"
+	withdrawallogrepo "github.com/aridae/gophermart-diploma/internal/repos/withdrawal-log-repo"
 	httpserver "github.com/aridae/gophermart-diploma/internal/transport/http"
 	httpapi "github.com/aridae/gophermart-diploma/internal/transport/http/http-api"
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
@@ -53,15 +54,17 @@ func main() {
 
 	pgTxManager := trman.Must(trmpgx.NewDefaultFactory(pgClient))
 
-	userRepository := userdb.NewRepository(pgClient, trmpgx.DefaultCtxGetter)
+	userRepository := userrepo.New(pgClient, trmpgx.DefaultCtxGetter)
 
-	ordersRepository := orderdb.NewRepository(pgClient, trmpgx.DefaultCtxGetter)
+	userBalanceRepository := userbalancerepo.New(pgClient, trmpgx.DefaultCtxGetter)
 
-	withdrawalsLogsRepository := withdrawallogdb.NewRepository(pgClient, trmpgx.DefaultCtxGetter)
+	ordersRepository := orderrepo.New(pgClient, trmpgx.DefaultCtxGetter)
+
+	withdrawalsLogsRepository := withdrawallogrepo.New(pgClient, trmpgx.DefaultCtxGetter)
 
 	jwtService := mustInitJWTService(ctx, cnf)
 
-	getBalanceHandler := getbalance.NewHandler()
+	getBalanceHandler := getbalance.NewHandler(userBalanceRepository)
 	getOrdersHandler := getorders.NewHandler(ordersRepository)
 	getWithdrawalsHistoryHandler := getwithdrawalshistory.NewHandler(withdrawalsLogsRepository)
 	loginUserHandler := loginuser.NewHandler(userRepository, jwtService)
@@ -69,7 +72,7 @@ func main() {
 	requestWithdrawalHandler := requestwithdrawal.NewHandler(pgTxManager, ordersRepository, withdrawalsLogsRepository)
 	submitOrderHandler := submitorder.NewHandler(pgTxManager, ordersRepository)
 
-	orderAccrualService := accrual.NewClient(cnf.AccuralSystemAddress)
+	orderAccrualService := accrual.NewClient(cnf.AccrualSystemAddress)
 	orderAccrualSyncer := orderaccrualsync.New(orderAccrualService, ordersRepository, cnf.AccrualSyncInterval, cnf.AccrualSyncWorkersPoolSize)
 	go orderAccrualSyncer.Run(ctx)
 

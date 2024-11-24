@@ -39,6 +39,7 @@ require (
 	github.com/onsi/ginkgo v1.16.5 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/speakeasy-api/openapi-overlay v0.9.0 // indirect
+	github.com/vasilenkodm/luhn v0.0.0-20240331151825-3dc418f88cb5 // indirect
 	github.com/vmware-labs/yaml-jsonpath v0.3.2 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
 	golang.org/x/mod v0.17.0 // indirect

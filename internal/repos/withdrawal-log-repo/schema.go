@@ -1,4 +1,4 @@
-package withdrawallogdb
+package withdrawallogrepo
 
 import (
 	"github.com/Masterminds/squirrel"

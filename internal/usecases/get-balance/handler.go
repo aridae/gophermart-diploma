@@ -2,16 +2,25 @@ package getbalance
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 )
 
-type Handler struct{}
+type balanceRepository interface {
+	GetUserBalance(ctx context.Context, user model.User) (model.Balance, error)
+}
 
-func NewHandler() *Handler {
-	return &Handler{}
+type Handler struct {
+	balanceRepository balanceRepository
+}
+
+func NewHandler(balanceRepository balanceRepository) *Handler {
+	return &Handler{
+		balanceRepository: balanceRepository,
+	}
 }
 
 func (h *Handler) Handle(ctx context.Context) (model.Balance, error) {
@@ -20,11 +29,11 @@ func (h *Handler) Handle(ctx context.Context) (model.Balance, error) {
 		return model.Balance{}, domainerrors.UnauthorizedError()
 	}
 
-	_ = user
+	balance, err := h.balanceRepository.GetUserBalance(ctx, user)
+	if err != nil {
+		return model.Balance{}, fmt.Errorf("balanceRepository.GetUserBalance: %w", err)
 
-	// TODO(calculate current balance, return)
-	return model.Balance{
-		Current:   666.6,
-		Withdrawn: 777.7,
-	}, nil
+	}
+
+	return balance, nil
 }

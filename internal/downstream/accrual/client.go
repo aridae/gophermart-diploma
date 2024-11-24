@@ -33,7 +33,7 @@ func (c *Client) doRequest(
 	body io.Reader,
 	presentError func(status string, code int) error,
 ) ([]byte, error) {
-	req, err := http.NewRequestWithContext(ctx, method, url, body)
+	req, err := http.NewRequestWithContext(ctx, method, c.address+url, body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create http request: %w", err)
 	}

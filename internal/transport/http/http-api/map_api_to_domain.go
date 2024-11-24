@@ -22,7 +22,7 @@ func mapAPIToDomainRegisterRequest(r oapispec.PostUserRegisterJSONBody) register
 	}
 }
 
-func mapAPIToDomainWithdrawalRequest(r oapispec.PostUserBalanceJSONBody) requestwithdrawal.Request {
+func mapAPIToDomainWithdrawalRequest(r oapispec.PostUserBalanceWithdrawJSONBody) requestwithdrawal.Request {
 	return requestwithdrawal.Request{
 		OrderNumber: r.Order,
 		Sum:         model.NewMoney(r.Sum),
