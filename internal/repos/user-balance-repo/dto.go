@@ -6,9 +6,9 @@ import (
 )
 
 type balanceDTO struct {
-	UserLogin           string `db:"user_login"`
-	CurrentBalanceCents int64  `db:"current_balance_cents"`
-	WithdrawnCents      *int64 `db:"withdrawn_cents"`
+	UserLogin      string `db:"user_login"`
+	AccrualCents   int64  `db:"accrual_cents"`
+	WithdrawnCents *int64 `db:"withdrawn_cents"`
 }
 
 func mapDTOToDomainUserBalance(dto balanceDTO) model.Balance {
@@ -17,7 +17,7 @@ func mapDTOToDomainUserBalance(dto balanceDTO) model.Balance {
 		Owner: model.User{
 			Login: dto.UserLogin,
 		},
-		Current:   model.NewMoneyFromCents(dto.CurrentBalanceCents),
+		Current:   model.NewMoneyFromCents(dto.AccrualCents - withdrawnCents),
 		Withdrawn: model.NewMoneyFromCents(withdrawnCents),
 	}
 }

@@ -21,8 +21,8 @@ func (s *ApiService) PostUserOrders(w http.ResponseWriter, r *http.Request) {
 		mustPresentJSONError(err, w)
 		return
 	}
-	httpStatusCode := mapResponseCode(resp.Code)
 
+	httpStatusCode := mapResponseCode(resp.Code)
 	w.WriteHeader(httpStatusCode)
 }
 

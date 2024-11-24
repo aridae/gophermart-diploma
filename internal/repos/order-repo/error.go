@@ -3,5 +3,5 @@ package orderrepo
 import "errors"
 
 var (
-	OrderNumberUniqueConstraintViolatedError = errors.New("order number unique constraint violation")
+	ErrOrderNumberUniqueConstraintViolated = errors.New("order number unique constraint violation")
 )

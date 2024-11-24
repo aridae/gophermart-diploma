@@ -24,7 +24,7 @@ func NewHandler(withdrawalsRepository withdrawalsRepository) *Handler {
 func (h *Handler) Handle(ctx context.Context) ([]model.WithdrawalLog, error) {
 	user, authorized := authctx.GetUserFromContext(ctx)
 	if !authorized {
-		return nil, domainerrors.UnauthorizedError()
+		return nil, domainerrors.ErrUnauthorized()
 	}
 
 	withdrawalsLogs, err := h.withdrawalsRepository.GetByActor(ctx, user)

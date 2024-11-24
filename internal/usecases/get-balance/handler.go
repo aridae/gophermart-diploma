@@ -26,7 +26,7 @@ func NewHandler(balanceRepository balanceRepository) *Handler {
 func (h *Handler) Handle(ctx context.Context) (model.Balance, error) {
 	user, authorized := authctx.GetUserFromContext(ctx)
 	if !authorized {
-		return model.Balance{}, domainerrors.UnauthorizedError()
+		return model.Balance{}, domainerrors.ErrUnauthorized()
 	}
 
 	balance, err := h.balanceRepository.GetUserBalance(ctx, user)

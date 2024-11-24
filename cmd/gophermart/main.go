@@ -69,7 +69,7 @@ func main() {
 	getWithdrawalsHistoryHandler := getwithdrawalshistory.NewHandler(withdrawalsLogsRepository)
 	loginUserHandler := loginuser.NewHandler(userRepository, jwtService)
 	registerUserHandler := registeruser.NewHandler(userRepository, jwtService)
-	requestWithdrawalHandler := requestwithdrawal.NewHandler(pgTxManager, ordersRepository, withdrawalsLogsRepository)
+	requestWithdrawalHandler := requestwithdrawal.NewHandler(pgTxManager, withdrawalsLogsRepository, userBalanceRepository)
 	submitOrderHandler := submitorder.NewHandler(pgTxManager, ordersRepository)
 
 	orderAccrualService := accrual.NewClient(cnf.AccrualSystemAddress)

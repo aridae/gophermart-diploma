@@ -34,7 +34,7 @@ func (r *Repository) CreateUser(ctx context.Context, user model.UserCredentials,
 
 	if _, err = queryable.Exec(ctx, sql, args...); err != nil {
 		if pgerr := new(pgconn.PgError); errors.As(err, &pgerr) && isLoginUniqueConstraintViolated(pgerr) {
-			return LoginUniqueConstraintViolatedError
+			return ErrLoginUniqueConstraintViolated
 		}
 
 		return fmt.Errorf("failed to execute query: %w", err)

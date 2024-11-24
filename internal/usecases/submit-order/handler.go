@@ -54,12 +54,12 @@ type Response struct {
 func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 	user, authorized := authctx.GetUserFromContext(ctx)
 	if !authorized {
-		return Response{}, domainerrors.UnauthorizedError()
+		return Response{}, domainerrors.ErrUnauthorized()
 	}
 
 	err := validateOrderNumber(req.OrderNumber)
 	if err != nil {
-		return Response{}, domainerrors.InvalidOrderNumberError(req.OrderNumber, err.Error())
+		return Response{}, domainerrors.ErrInvalidOrderNumber(req.OrderNumber, err.Error())
 	}
 
 	now := h.now()
@@ -73,7 +73,7 @@ func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 
 		if len(orders) > 0 {
 			if orders[0].Owner.Login != user.Login {
-				return domainerrors.OrderNumberAlreadySubmittedError(req.OrderNumber)
+				return domainerrors.ErrOrderNumberAlreadySubmitted(req.OrderNumber)
 			}
 			resp.Code = OrderNumberAlreadyLoadedByThisOwner
 			return nil

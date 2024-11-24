@@ -55,8 +55,8 @@ func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 
 	err = h.userRepository.CreateUser(ctx, creds, now)
 	if err != nil {
-		if errors.Is(err, userrepo.LoginUniqueConstraintViolatedError) {
-			return Response{}, domainerrors.LoginAlreadyTakenError(req.Login)
+		if errors.Is(err, userrepo.ErrLoginUniqueConstraintViolated) {
+			return Response{}, domainerrors.ErrLoginAlreadyTaken(req.Login)
 		}
 
 		return Response{}, fmt.Errorf("error creating user: %w", err)

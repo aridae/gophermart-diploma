@@ -26,7 +26,7 @@ func NewHandler(ordersRepository ordersRepository) *Handler {
 func (h *Handler) Handle(ctx context.Context) ([]model.Order, error) {
 	user, authorized := authctx.GetUserFromContext(ctx)
 	if !authorized {
-		return nil, domainerrors.UnauthorizedError()
+		return nil, domainerrors.ErrUnauthorized()
 	}
 
 	orders, err := h.ordersRepository.GetByOwner(ctx, user)

@@ -47,11 +47,11 @@ func (h *Handler) Handle(ctx context.Context, req Request) (Response, error) {
 	}
 
 	if creds == nil {
-		return Response{}, domainerrors.InvalidUserCredentialsError()
+		return Response{}, domainerrors.ErrInvalidUserCredentials()
 	}
 
 	if !creds.Equal(req.Login, req.Password) {
-		return Response{}, domainerrors.InvalidUserCredentialsError()
+		return Response{}, domainerrors.ErrInvalidUserCredentials()
 	}
 
 	user := model.User{Login: creds.Login}

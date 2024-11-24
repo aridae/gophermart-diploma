@@ -36,7 +36,7 @@ func (r *Repository) CreateOrder(ctx context.Context, orderSubmit model.OrderSub
 
 	if _, err = queryable.Exec(ctx, sql, args...); err != nil {
 		if pgerr := new(pgconn.PgError); errors.As(err, &pgerr) && isOrderNumberUniqueConstraintViolated(pgerr) {
-			return OrderNumberUniqueConstraintViolatedError
+			return ErrOrderNumberUniqueConstraintViolated
 		}
 
 		return fmt.Errorf("failed to execute query: %w", err)

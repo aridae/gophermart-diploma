@@ -21,8 +21,9 @@ import (
 	"github.com/getkin/kin-openapi/openapi3"
 )
 
+type bearerAuthScopesCtxKey string
 const (
-	BearerAuthScopes = "bearerAuth.Scopes"
+	BearerAuthScopes bearerAuthScopesCtxKey = "bearerAuth.Scopes"
 )
 
 // Defines values for OrderStatus.

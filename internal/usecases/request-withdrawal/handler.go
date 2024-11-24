@@ -8,17 +8,14 @@ import (
 	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
 	"github.com/aridae/gophermart-diploma/internal/model"
 	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
-	orderrepo "github.com/aridae/gophermart-diploma/internal/repos/order-repo"
-	"github.com/aridae/gophermart-diploma/pkg/pointer"
 )
 
 type transactionManager interface {
 	Do(ctx context.Context, fn func(ctx context.Context) error) (err error)
 }
 
-type ordersRepository interface {
-	GetByNumbers(ctx context.Context, orderNumbers []string) ([]model.Order, error)
-	UpdateOrder(ctx context.Context, orderNumber string, setters ...orderrepo.Setter) error
+type userBalanceRepository interface {
+	GetUserBalance(ctx context.Context, user model.User) (model.Balance, error)
 }
 
 type withdrawalLogsRepository interface {
@@ -27,20 +24,20 @@ type withdrawalLogsRepository interface {
 
 type Handler struct {
 	transactionManager       transactionManager
-	ordersRepository         ordersRepository
 	withdrawalLogsRepository withdrawalLogsRepository
+	userBalanceRepository    userBalanceRepository
 	now                      func() time.Time
 }
 
 func NewHandler(
 	transactionManager transactionManager,
-	ordersRepository ordersRepository,
 	withdrawalLogsRepository withdrawalLogsRepository,
+	userBalanceRepository userBalanceRepository,
 ) *Handler {
 	return &Handler{
 		transactionManager:       transactionManager,
-		ordersRepository:         ordersRepository,
 		withdrawalLogsRepository: withdrawalLogsRepository,
+		userBalanceRepository:    userBalanceRepository,
 		now:                      time.Now().UTC,
 	}
 }
@@ -53,41 +50,25 @@ type Request struct {
 func (h *Handler) Handle(ctx context.Context, req Request) error {
 	user, authorized := authctx.GetUserFromContext(ctx)
 	if !authorized {
-		return domainerrors.UnauthorizedError()
+		return domainerrors.ErrUnauthorized()
 	}
 
 	now := h.now()
 
 	err := h.transactionManager.Do(ctx, func(ctx context.Context) error {
-		orders, txErr := h.ordersRepository.GetByNumbers(ctx, []string{req.OrderNumber})
+		userBalance, txErr := h.userBalanceRepository.GetUserBalance(ctx, user)
 		if txErr != nil {
-			return fmt.Errorf("ordersRepository.GetByNumbers <number:%s>: %w", req.OrderNumber, txErr)
+			return fmt.Errorf("userBalanceRepository.GetUserBalance: %w", txErr)
 		}
 
-		if len(orders) == 0 {
-			return domainerrors.OrderNotFoundError(req.OrderNumber)
-		}
-		order := orders[0]
-
-		if order.Owner.Login != user.Login {
-			return domainerrors.NoAccessToOrderError(req.OrderNumber)
-		}
-
-		orderAccrual := pointer.Deref(order.Accrual, model.NewMoney(0))
-		if orderAccrual.Less(req.Sum) {
-			return domainerrors.InsufficientOrderAccrualError(req.OrderNumber, orderAccrual, req.Sum)
-		}
-		withdrawnAccrual := orderAccrual.Sub(req.Sum)
-
-		txErr = h.ordersRepository.UpdateOrder(ctx, req.OrderNumber, orderrepo.SetOrderAccrual(withdrawnAccrual))
-		if txErr != nil {
-			return fmt.Errorf("ordersRepository.UpdateOrder: %w", txErr)
+		if userBalance.Current.Less(req.Sum) {
+			return domainerrors.ErrInsufficientOrderAccrual(req.OrderNumber, userBalance.Current, req.Sum)
 		}
 
 		txErr = h.withdrawalLogsRepository.CreateWithdrawalLog(ctx, model.WithdrawalLog{
 			Sum:         req.Sum,
 			OrderNumber: req.OrderNumber,
-			Actor:       order.Owner,
+			Actor:       user,
 			CreatedAt:   now,
 		}, now)
 		if txErr != nil {

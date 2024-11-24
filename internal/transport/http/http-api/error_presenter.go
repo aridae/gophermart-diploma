@@ -44,8 +44,8 @@ func mustPresentJSONError(err error, w http.ResponseWriter) {
 
 	payload, _ := json.Marshal(jsonErr)
 
-	_, _ = w.Write(payload)
 	w.WriteHeader(code)
+	_, _ = w.Write(payload)
 }
 
 func mustPresentJSONErrorWithCode(err error, w http.ResponseWriter, code int) {
@@ -57,6 +57,6 @@ func mustPresentJSONErrorWithCode(err error, w http.ResponseWriter, code int) {
 
 	payload, _ := json.Marshal(jsonErr)
 
-	_, _ = w.Write(payload)
 	w.WriteHeader(code)
+	_, _ = w.Write(payload)
 }

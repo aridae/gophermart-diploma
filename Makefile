@@ -25,3 +25,23 @@ fmt:
 .PHONY: test
 test:
 	go test ./...
+
+.PHONY: build
+build:
+	GOOS=darwin GOARCH=amd64 go build -o bin/gophermart cmd/gophermart/main.go
+
+.PHONY: autotest
+autotest: build
+	./bin/gophermarttest \
+		 -test.v -test.run=^TestGophermart$$ \
+		 -gophermart-binary-path=bin/gophermart \
+		 -gophermart-host=localhost \
+		 -gophermart-port=8081 \
+		 -gophermart-database-uri="***" \
+		 -accrual-binary-path=cmd/accrual/accrual_darwin_amd64 \
+		 -accrual-host=localhost \
+		 -accrual-port=9000 \
+		 -accrual-database-uri="***"
+
+perm:
+	chmod -R +x bin
