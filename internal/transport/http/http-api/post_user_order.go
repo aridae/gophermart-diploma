@@ -7,7 +7,7 @@ import (
 	submitorder "github.com/aridae/gophermart-diploma/internal/usecases/submit-order"
 )
 
-func (s *ApiService) PostUserOrders(w http.ResponseWriter, r *http.Request) {
+func (s *APIService) PostUserOrders(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	apiOrderNum, err := io.ReadAll(r.Body)

@@ -5,6 +5,6 @@ import (
 )
 
 var (
-	OrderNotFoundErr     = errors.New("order not found")
-	ResourceExhaustedErr = errors.New("resource exhausted")
+	ErrOrderNotFound     = errors.New("order not found")
+	ErrResourceExhausted = errors.New("resource exhausted")
 )

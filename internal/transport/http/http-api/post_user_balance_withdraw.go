@@ -7,7 +7,7 @@ import (
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
 )
 
-func (s *ApiService) PostUserBalanceWithdraw(w http.ResponseWriter, r *http.Request) {
+func (s *APIService) PostUserBalanceWithdraw(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	apiReq := oapispec.PostUserBalanceWithdrawJSONBody{}

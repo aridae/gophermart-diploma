@@ -5,7 +5,7 @@ import (
 	"net/http"
 )
 
-func (s *ApiService) GetUserBalance(w http.ResponseWriter, r *http.Request) {
+func (s *APIService) GetUserBalance(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	ctx := r.Context()
 

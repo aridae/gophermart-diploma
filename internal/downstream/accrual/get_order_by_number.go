@@ -28,9 +28,9 @@ func (c *Client) GetOrderByNumber(ctx context.Context, orderNumber string) (Orde
 func getOrderCallStatusCodeToError(status string, code int) error {
 	switch code {
 	case http.StatusNoContent:
-		return OrderNotFoundErr
+		return ErrOrderNotFound
 	case http.StatusTooManyRequests:
-		return ResourceExhaustedErr
+		return ErrResourceExhausted
 	case http.StatusOK:
 		return nil
 	}

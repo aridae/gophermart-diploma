@@ -7,7 +7,7 @@ import (
 	oapispec "github.com/aridae/gophermart-diploma/internal/transport/http/http-api/oapi-spec"
 )
 
-func (s *ApiService) PostUserRegister(w http.ResponseWriter, r *http.Request) {
+func (s *APIService) PostUserRegister(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
 	signupReq := oapispec.PostUserRegisterJSONBody{}

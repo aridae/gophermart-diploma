@@ -10,7 +10,7 @@ import (
 	submitorder "github.com/aridae/gophermart-diploma/internal/usecases/submit-order"
 )
 
-type ApiService struct {
+type APIService struct {
 	getBalanceHandler            *getbalance.Handler
 	getOrdersHandler             *getorders.Handler
 	getWithdrawalsHistoryHandler *getwithdrawalshistory.Handler
@@ -28,8 +28,8 @@ func NewAPIService(
 	registerUserHandler *registeruser.Handler,
 	requestWithdrawalHandler *requestwithdrawal.Handler,
 	submitOrderHandler *submitorder.Handler,
-) *ApiService {
-	api := &ApiService{
+) *APIService {
+	api := &APIService{
 		getBalanceHandler:            getBalanceHandler,
 		getOrdersHandler:             getOrdersHandler,
 		getWithdrawalsHistoryHandler: getWithdrawalsHistoryHandler,

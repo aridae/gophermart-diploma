@@ -2,16 +2,12 @@ package authmw
 
 import (
 	"context"
-	"errors"
+	domainerrors "github.com/aridae/gophermart-diploma/internal/model/domain-errors"
 	"net/http"
 	"slices"
 
 	"github.com/aridae/gophermart-diploma/internal/auth/authctx"
 	"github.com/aridae/gophermart-diploma/internal/model"
-)
-
-var (
-	unauthorizedError = errors.New("unauthorized")
 )
 
 type jwtService interface {
@@ -31,7 +27,7 @@ func AuthenticateMiddleware(
 
 			token := r.Header.Get("Authorization")
 			if token == "" {
-				http.Error(w, unauthorizedError.Error(), http.StatusUnauthorized)
+				http.Error(w, domainerrors.ErrUnauthorized().Error(), http.StatusUnauthorized)
 				return
 			}
 

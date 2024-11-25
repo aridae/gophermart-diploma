@@ -7,7 +7,7 @@ import (
 	"github.com/aridae/gophermart-diploma/pkg/slice"
 )
 
-func (s *ApiService) GetUserOrders(w http.ResponseWriter, r *http.Request) {
+func (s *APIService) GetUserOrders(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	ctx := r.Context()
 
